@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Roboczy'),
-        ('published', 'Opublikowany')
+        ('published', 'Opublikowany'),
     )
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250, unique_for_date='publish')
@@ -15,13 +15,13 @@ class Post(models.Model):
     published = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, defaul='draft')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
 
     class Meta:
         """zawiera metadane; podczas wykonywania zapytania do bazy nakazujemy Django domyslne
         sortowanie wynikow w kolejnosci malejacej wzgledem kolumny publish (poprzez umieszczenie
         znaku minus przed publish)"""
-        ordering = ('-publish', )
+        ordering = ('-published', )
 
     def __str__(self):  # domyslna czytelna dla czlowieka reprezentacja obiekt
         return self.title
