@@ -3,9 +3,10 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super(PublishedManager, self).get_queryset().filter(status='published')
+        return super(PublishedManager, self).get_queryset().filter(status='publish')
 
 
 class Post(models.Model):
@@ -19,7 +20,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, related_name='blog_posts', on_delete=models.CASCADE)
     body = models.TextField()
     publish = models.DateTimeField(default=timezone.now)
-    published = PublishedManager()   # manager niestandardowy   -> to było wcześniej
+    published = PublishedManager()   # manager niestandardowy
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
@@ -30,10 +31,12 @@ class Post(models.Model):
         znaku minus przed publish)"""
         ordering = ('-publish', )
 
+    def get_absolute_url(self):
+        return reverse('blog:post_detail',
+                       args=[self.publish.year, self.publish.strftime('%m'),
+                             self.publish.strftime('%d'), self.slug])
+
     def __str__(self):  # domyslna czytelna dla czlowieka reprezentacja obiekt
         return self.title
 
-    def get_absolute_url(self):
-        return reverse('blog:post_detail',
-                        args=[self.publish.year, self.publish.strftime('%m'),
-                              self.publish.strftime('%d'), self.slug])
+
