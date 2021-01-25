@@ -11,7 +11,7 @@ class PublishedManager(models.Manager):
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Roboczy'),
-        ('published', 'Opublikowany'),
+        ('publish', 'Opublikowany'),
     )
     objects = models.Manager()  # manager domyslny
     title = models.CharField(max_length=250)
@@ -28,7 +28,7 @@ class Post(models.Model):
         """zawiera metadane; podczas wykonywania zapytania do bazy nakazujemy Django domyslne
         sortowanie wynikow w kolejnosci malejacej wzgledem kolumny publish (poprzez umieszczenie
         znaku minus przed publish)"""
-        ordering = ('-published', )
+        ordering = ('-publish', )
 
     def __str__(self):  # domyslna czytelna dla czlowieka reprezentacja obiekt
         return self.title
