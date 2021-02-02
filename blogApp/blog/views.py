@@ -31,22 +31,44 @@ def post_detail(request,year, month,day, post):
     return render(request,'blog/post/detail.html', {'post': post})
 
 
+# def post_share(request, post_id):
+#     # pobranie posta na podstawie jego identyfikatora
+#     post = get_object_or_404(Post, id = post_id, status='published')
+#     sent = False
+#
+#     if request.method == 'POST':
+#         # formularz zostal wyslany
+#         form = EmailPostForm(request.POST)
+#         if form.is_valid:
+#             # weryfikacja pol formularza zakonczyla sie powodzeniem
+#             cd = form.cleaned_data   # wiec mozna wyslac wiadomosc email
+#             post_url = request.build_absolute_uri(post.get_absolute_url())
+#             subject = '{} ({}) zacheca do przeczytania "{}"'.format(cd['name'], cd['email'], cd[post.title])
+#             message = 'Przeczytaj post "{}" na stronie {}\n\n Komentarz dodany przez {}: {}'.format(post.title, post_url, cd['name'], cd['comments'])
+#             send_mail(subject, message, 'admin@myblog.com', [cd['to']])
+#             sent = True
+#     else:
+#         form = EmailPostForm()
+#     return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent':sent})
+
 def post_share(request, post_id):
-    # pobranie posta na podstawie jego identyfikatora
-    post = get_object_or_404(Post, id = post_id, status='published')
+    # Pobranie posta na podstawie jego identyfikatora.
+    post = get_object_or_404(Post, id=post_id, status='publish')
     sent = False
 
     if request.method == 'POST':
-        # formularz zostal wyslany
+        # Formularz został wysłany.
         form = EmailPostForm(request.POST)
-        if form.is_valid:
-            # weryfikacja pol formularza zakonczyla sie powodzeniem
-            cd = form.cleaned_data   # wiec mozna wyslac wiadomosc email
+        if form.is_valid():
+            # Weryfikacja pól formularza zakończyła się powodzeniem…
+            cd = form.cleaned_data
             post_url = request.build_absolute_uri(post.get_absolute_url())
-            subject = '{} ({}) zacheca do przeczytania "{}"'.format(cd['name'], cd['email'], cd[post.title])
+            subject = '{} ({}) zachęca do przeczytania "{}"'.format(cd['name'], cd['email'], post.title)
             message = 'Przeczytaj post "{}" na stronie {}\n\n Komentarz dodany przez {}: {}'.format(post.title, post_url, cd['name'], cd['comments'])
             send_mail(subject, message, 'admin@myblog.com', [cd['to']])
             sent = True
     else:
         form = EmailPostForm()
-    return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent':sent})
+    return render(request, 'blog/post/share.html', {'post': post,
+                                                    'form': form,
+                                                    'sent': sent})

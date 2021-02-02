@@ -9,8 +9,7 @@
   </p>
   {{ post.body|linebreaks }}
   <p>
-    <a href="{ % url 'blog:post_share' post.id %}">
-<!--    <a href="{{posts.category.get_absolute_url}}">{{posts.category}}-->
+    <a href="{% url "blog:post_share" post.id %}">
     Udostępnij post
     </a>
   </p>
