@@ -8,7 +8,6 @@ class PublishedManager(models.Manager):
     def get_queryset(self):
         return super(PublishedManager, self).get_queryset().filter(status='publish')
 
-
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Roboczy'),
@@ -38,5 +37,23 @@ class Post(models.Model):
 
     def __str__(self):  # domyslna czytelna dla czlowieka reprezentacja obiekt
         return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return 'Komentarz dodany przez {} dla posta {}'.format(self.name, self.post)
+
+
 
 

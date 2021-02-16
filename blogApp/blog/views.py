@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 
 class PostListView(ListView):
@@ -28,28 +28,19 @@ def post_list(request):
 
 def post_detail(request,year, month,day, post):
     post = get_object_or_404(Post, slug=post, status='publish', publish__year=year, publish__month=month, publish__day=day)
-    return render(request,'blog/post/detail.html', {'post': post})
+    comment_form = CommentForm()
+    comments = post.comments.filter(active=True)  # lista aktywnych komentarzy dla posta
+    if request.method == 'POST':    # komentarz opublikowany
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)  # utworzenie obiektu Comment, ale nie zapisujemy go w bazie danych dlatego commit=False
+            new_comment.post = post   # przypisujemy komentarz do biezacego posta
+            new_comment.save()  # zapisujemy komentarz w db
+        else:
+            comment_form = CommentForm()
 
+    return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments, 'comment_form': comment_form})
 
-# def post_share(request, post_id):
-#     # pobranie posta na podstawie jego identyfikatora
-#     post = get_object_or_404(Post, id = post_id, status='published')
-#     sent = False
-#
-#     if request.method == 'POST':
-#         # formularz zostal wyslany
-#         form = EmailPostForm(request.POST)
-#         if form.is_valid:
-#             # weryfikacja pol formularza zakonczyla sie powodzeniem
-#             cd = form.cleaned_data   # wiec mozna wyslac wiadomosc email
-#             post_url = request.build_absolute_uri(post.get_absolute_url())
-#             subject = '{} ({}) zacheca do przeczytania "{}"'.format(cd['name'], cd['email'], cd[post.title])
-#             message = 'Przeczytaj post "{}" na stronie {}\n\n Komentarz dodany przez {}: {}'.format(post.title, post_url, cd['name'], cd['comments'])
-#             send_mail(subject, message, 'admin@myblog.com', [cd['to']])
-#             sent = True
-#     else:
-#         form = EmailPostForm()
-#     return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent':sent})
 
 def post_share(request, post_id):
     # Pobranie posta na podstawie jego identyfikatora.
@@ -72,3 +63,4 @@ def post_share(request, post_id):
     return render(request, 'blog/post/share.html', {'post': post,
                                                     'form': form,
                                                     'sent': sent})
+
