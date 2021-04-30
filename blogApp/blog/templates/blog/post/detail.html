@@ -16,13 +16,13 @@
 
   {% with comments.count as total_comments %}
     <h2>
-      {{ total_comments }} komentarz {{ total_comments|pluralize:"y" }}
+      {{ total_comments }} komentarz{{total_comments|pluralize:"y" }}
     </h2>
   {% endwith %}
   {% for comment in comments %}
     <div class="comment">
       <p class="info">
-        Komentarz {{ forloop.counter }} dodany prze {{ comment.name }}
+        Komentarz {{ forloop.counter }} dodany przez {{ comment.name }}
         {{ comment.created }}
       </p>
       {{ comment.body|linebreaks }}
