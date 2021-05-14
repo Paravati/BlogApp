@@ -20,6 +20,10 @@ h2 {
     margin:30px 0 0;
 }
 
+p.tags {
+    font-size: 12px;
+}
+
 #content { 
     float:left;
     width:60%;
