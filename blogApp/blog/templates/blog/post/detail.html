@@ -5,21 +5,21 @@
 {% block content %}
   <h1>{{ post.title }}</h1>
   <p class="date">
-    Opublikowany {{ post.publish }} przez {{ post.author }}
+    Published {{ post.publish }} by {{ post.author }}
   </p>
   {{ post.body|linebreaks }}
   <p>
     <a href="{% url "blog:post_share" post.id %}">
-    Udostępnij post
+    Share post
     </a>
   </p>
-  <h2>Podobne posty</h2>
+  <h2>Similar posts</h2>
   {% for post in similar_posts %}
     <p>
       <a href="{{post.get_absolute_url}}" > {{post.title}}</a>
     </p>
   {% empty %}
-    Nie ma podobnych postów
+    There are no similar posts.
   {% endfor %}
 
   {% with comments.count as total_comments %}
@@ -30,23 +30,23 @@
   {% for comment in comments %}
     <div class="comment">
       <p class="info">
-        Komentarz {{ forloop.counter }} dodany przez {{ comment.name }}
+        Comment {{ forloop.counter }} added by {{ comment.name }}
         {{ comment.created }}
       </p>
       {{ comment.body|linebreaks }}
     </div>
     {% empty %}
-    <p>Nie ma jeszcze żadnych komentarzy.</p>
+    <p>No comments yet.</p>
   {% endfor %}
 
   {% if new_comment %}
-    <h2>Twój komentarz został dodany.</h2>
+    <h2>Your comment was added, thanks!</h2>
   {% else %}
-    <h2>Dodaj nowy komentarz</h2>
+    <h2>Add new comment</h2>
     <form action="." method="post">
       {{ comment_form.as_p }}
       {% csrf_token %}
-      <p><input type="submit" value="Dodaj komentarz"></p>
+      <p><input type="submit" value="Add comment"></p>
     </form>
   {% endif %}
 {% endblock %}
